@@ -1,5 +1,5 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'data/api_provider.dart';
 import 'model/popular_movies.dart';
 
@@ -11,7 +11,7 @@ class MoviesApp extends StatelessWidget {
     return MaterialApp(
       title: 'Movies App',
       theme: ThemeData(
-        primarySwatch: Colors.indigo,
+        primarySwatch: Colors.blue,
       ),
       home: Home(),
     );
@@ -26,8 +26,8 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   ApiProvider apiProvider = ApiProvider();
   late Future<PopularMovies> popularMovies;
-String imageBaseUrl = 'https://image.tmdb.org/t/p/w500';
 
+  String imageBaseUrl = 'https://image.tmdb.org/t/p/original/';
   @override
   void initState() {
     popularMovies = apiProvider.getPopularMovies();
@@ -44,7 +44,6 @@ String imageBaseUrl = 'https://image.tmdb.org/t/p/w500';
         future: popularMovies,
         builder: (BuildContext context, AsyncSnapshot snapshot) {
           if (snapshot.hasData) {
-            print("Has Data: ${snapshot.hasData}");
             return ListView.builder(
               itemCount: snapshot.data.results.length,
               itemBuilder: (BuildContext context, int index) {
@@ -52,22 +51,20 @@ String imageBaseUrl = 'https://image.tmdb.org/t/p/w500';
                     poster:
                         '$imageBaseUrl${snapshot.data.results[index].posterPath}',
                     title: '${snapshot.data.results[index].title}',
-                    date: '${snapshot.data.results[index].releaseDate}',
                     voteAverage: '${snapshot.data.results[index].voteAverage}',
                     onTap: () {
                       Navigator.of(context).push(MaterialPageRoute(
                           builder: (context) => MovieDetail(
                                 movie: snapshot.data.results[index],
                               )));
-                    });
+                    },
+                    date: '${snapshot.data.results[index].releaseDate}');
               },
             );
           } else if (snapshot.hasError) {
-            print("Has Error: ${snapshot.hasError}");
             return Text('Error!!!');
           } else {
-            print("Loading...");
-            return CircularProgressIndicator();
+            return Center(child: CircularProgressIndicator());
           }
         },
       ),
@@ -93,6 +90,8 @@ String imageBaseUrl = 'https://image.tmdb.org/t/p/w500';
                   width: 120,
                   child: CachedNetworkImage(
                     imageUrl: poster,
+                    placeholder: (context, url) => CircularProgressIndicator(),
+                    errorWidget: (context, url, error) => Icon(Icons.error),
                   ),
                 ),
                 SizedBox(
@@ -160,12 +159,84 @@ class MovieDetail extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    String imageBaseUrl = 'https://image.tmdb.org/t/p/original';
     return Scaffold(
       appBar: AppBar(
         title: Text(movie.title),
       ),
-      body: Container(
-        child: Text(movie.overview),
+      body: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: Column(
+          children: [
+            ClipRRect(
+              borderRadius: BorderRadius.circular(8),
+              child: Container(
+                height: 400,
+                child: CachedNetworkImage(
+                  imageUrl: imageBaseUrl + movie.posterPath,
+                  placeholder: (context, url) => CircularProgressIndicator(),
+                  errorWidget: (context, url, error) => Icon(Icons.error),
+                ),
+              ),
+            ),
+            SizedBox(
+              height: 15,
+            ),
+            Container(
+              child: Text(
+                movie.overview,
+                textAlign: TextAlign.center,
+              ),
+            ),
+            SizedBox(
+              height: 15,
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Container(
+                  height: 40,
+                  padding: EdgeInsets.symmetric(horizontal: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.blue,
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: TextButton(
+                    onPressed: () {},
+                    child: Text(
+                      'Tonton',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ),
+                SizedBox(
+                  width: 10,
+                ),
+                Container(
+                  height: 40,
+                  padding: EdgeInsets.symmetric(horizontal: 6),
+                  decoration: BoxDecoration(
+                    color: Colors.blue,
+                    borderRadius: BorderRadius.circular(5),
+                  ),
+                  child: TextButton(
+                    onPressed: () {},
+                    child: Text(
+                      'Download',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                )
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -4,11 +4,12 @@ class PopularMovies {
   late int totalPages;
   late List<Results> results;
 
-  PopularMovies(
-      {required this.page,
-      required this.totalResults,
-      required this.totalPages,
-      required this.results});
+  PopularMovies({
+    required this.page,
+    required this.totalResults,
+    required this.totalPages,
+    required this.results,
+  });
 
   PopularMovies.fromJson(Map<String, dynamic> json) {
     page = json['page'];
@@ -17,13 +18,12 @@ class PopularMovies {
     if (json['results'] != null) {
       results = <Results>[];
       json['results'].forEach((v) {
-        results.add(new Results.fromJson(v));
+        results.add(Results.fromJson(v));
       });
     }
   }
-
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
+    final Map<String, dynamic> data = Map<String, dynamic>();
     data['page'] = this.page;
     data['total_results'] = this.totalResults;
     data['total_pages'] = this.totalPages;
@@ -35,7 +35,7 @@ class PopularMovies {
 }
 
 class Results {
-  late double popularity;
+  late double populatiry;
   late int voteCount;
   late bool video;
   late String posterPath;
@@ -51,7 +51,7 @@ class Results {
   late String releaseDate;
 
   Results(
-      {required this.popularity,
+      {required this.populatiry,
       required this.voteCount,
       required this.video,
       required this.posterPath,
@@ -67,8 +67,8 @@ class Results {
       required this.releaseDate});
 
   Results.fromJson(Map<String, dynamic> json) {
-    popularity = json['popularity'];
-    voteCount - json['vote_count'];
+    populatiry = json['popularity'];
+    voteCount = json['vote_count'];
     video = json['video'];
     posterPath = json['poster_path'];
     id = json['id'];
@@ -84,10 +84,8 @@ class Results {
   }
 
   Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['popularity'] = this.popularity;
-    data['vote_count'] = this.voteCount;
-    data['popularity'] = this.popularity;
+    final Map<String, dynamic> data = Map<String, dynamic>();
+    data['popularity'] = this.populatiry;
     data['vote_count'] = this.voteCount;
     data['video'] = this.video;
     data['poster_path'] = this.posterPath;
